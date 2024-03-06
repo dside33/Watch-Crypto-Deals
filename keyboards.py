@@ -1,4 +1,4 @@
-from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import ReplyKeyboardMarkup
 from aiogram.utils.keyboard import ReplyKeyboardBuilder
 
 from config import COINS, TIMEFRAMES

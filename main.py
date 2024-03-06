@@ -1,4 +1,3 @@
-
 import asyncio
 from aiogram import Bot, Dispatcher, Router
 from aiogram.filters import Command, CommandStart
@@ -9,6 +8,7 @@ from aiogram.fsm.state import State, StatesGroup
 
 from config import TOKEN, COINS, TIMEFRAMES
 from keyboards import get_coin_keyboard, get_timeframe_keyboard
+from get_trader_info import get_data
 
 
 client_router = Router()
@@ -23,7 +23,7 @@ class ClientState(StatesGroup):
 @client_router.message(CommandStart())
 async def process_start_command(message: Message, state: FSMContext):
     await state.set_state(ClientState.START_COIN)
-    await message.answer('Привет!\nМеня зовут Эхо-бот!\nНапиши мне что-нибудь', 
+    await message.answer('*приветствие*', 
                          reply_markup=get_coin_keyboard())
 
 
@@ -48,8 +48,21 @@ async def choose_timeframe_process(message: Message, state: FSMContext):
         coin = user_state_data['COIN']
         timeframe = user_state_data['TIMEFRAME']
 
-        await message.answer(f'Итог {coin} - {timeframe}', reply_markup=types.ReplyKeyboardRemove()) 
-        await state.clear()
+
+
+
+
+
+        # функция для получения данных по трейдерам 
+        get_data(coin, timeframe)
+
+
+
+
+
+        await message.answer(f'Итог {coin} - {timeframe}', reply_markup=get_coin_keyboard()) 
+        await state.set_state(ClientState.START_COIN)
+        # await state.clear()
     elif message.text == '🚪Назад':
         await state.set_state(ClientState.START_COIN)
         await message.answer('Привет!\nМеня зовут Эхо-бот!\nНапиши мне что-нибудь', 
