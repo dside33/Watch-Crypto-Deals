@@ -1,7 +1,7 @@
 import asyncio
 from aiogram import Bot, Dispatcher, Router
 from aiogram.filters import Command, CommandStart
-from aiogram.types import Message
+from aiogram.types import Message, FSInputFile
 
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
@@ -9,6 +9,7 @@ from aiogram.fsm.state import State, StatesGroup
 from config import TOKEN, COINS, TIMEFRAMES
 from keyboards import get_coin_keyboard, get_timeframe_keyboard
 from get_trader_info import get_data
+from get_kline_data import get_kline_data_day, get_kline_data_hour, create_plot
 
 
 client_router = Router()
@@ -31,7 +32,7 @@ async def process_start_command(message: Message, state: FSMContext):
 async def choose_coin_process(message: Message, state: FSMContext):
     if message.text in COINS:
         await state.update_data(COIN=message.text)
-                
+        
         await message.answer('Выберите период...', 
                             reply_markup=get_timeframe_keyboard())
         await state.set_state(ClientState.COIN_SELECTED) 
@@ -49,18 +50,20 @@ async def choose_timeframe_process(message: Message, state: FSMContext):
         timeframe = user_state_data['TIMEFRAME']
 
 
+        kline_data = None
+        if timeframe == '1 день':
+            kline_data = get_kline_data_day(COINS[coin], 1)
+        elif timeframe == '3 часа':
+            kline_data = get_kline_data_hour(COINS[coin], 3)
+        elif timeframe == '1 час':
+            kline_data = get_kline_data_hour(COINS[coin], 1)
 
+        if kline_data:
+            create_plot(kline_data["dates"], kline_data["prices"], COINS[coin])
 
+            cat = FSInputFile("price_vs_time_plot.png")
+            await message.answer_photo(cat, caption=f'{COINS[coin]} | {timeframe}', reply_markup=get_coin_keyboard())
 
-
-        # функция для получения данных по трейдерам 
-        get_data(coin, timeframe)
-
-
-
-
-
-        await message.answer(f'Итог {coin} - {timeframe}', reply_markup=get_coin_keyboard()) 
         await state.set_state(ClientState.START_COIN)
         # await state.clear()
     elif message.text == '🚪Назад':

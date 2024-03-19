@@ -1,5 +1,5 @@
 from aiogram.types import ReplyKeyboardMarkup
-from aiogram.utils.keyboard import ReplyKeyboardBuilder
+from aiogram.utils.keyboard import ReplyKeyboardBuilder, KeyboardButton
 
 from config import COINS, TIMEFRAMES
 
@@ -7,11 +7,9 @@ from config import COINS, TIMEFRAMES
 def get_coin_keyboard() -> ReplyKeyboardMarkup:
     builder = ReplyKeyboardBuilder()
 
-    builder.button(text=COINS[0])
-    builder.button(text=COINS[1])
-    builder.button(text=COINS[2])
-    builder.button(text=COINS[3])
-    builder.button(text=COINS[4])
+    for coin_name, _ in COINS.items():
+        builder.add(KeyboardButton(text=coin_name)) 
+
     builder.adjust(2)
 
     return builder.as_markup(resize_keyboard=True,
