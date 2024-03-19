@@ -3,7 +3,6 @@ import datetime as dt
 import matplotlib.pyplot as plt
 
 
-
 def get_kline_data(ticker: str, interval: int, start_time: dt.datetime):
     timestamp_start = int(start_time.timestamp() * 1000)
     timestamp_end = int(dt.datetime.now().timestamp() * 1000)
@@ -27,16 +26,6 @@ def get_kline_data_day(ticker: str, interval: int):
     start_time = dt.datetime.now() - dt.timedelta(days=1)
     return get_kline_data(ticker, interval, start_time)
 
-
-# def get_kline_data_3hour(ticker: str, interval: int):
-#     start_time = dt.datetime.now() - dt.timedelta(hours=3)
-#     return get_kline_data(ticker, interval, start_time)
-
-
-# def get_kline_data_1hour(ticker: str, interval: int):
-#     start_time = dt.datetime.now() - dt.timedelta(hours=1)
-#     return get_kline_data(ticker, interval, start_time)
-
 def get_kline_data_hour(ticker: str, interval: int):
     start_time = dt.datetime.now() - dt.timedelta(hours=interval)
     return get_kline_data(ticker, interval, start_time)
@@ -48,10 +37,6 @@ session = HTTP(
     testnet=False,
     api_key=key,
     api_secret=secret)
-
-# tickers = ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'SOLUSDT', 'XRPUSDT']  # варианты того, что мы будем искать
-# dates, prices = get_kline_data_hour("BTCUSDT", 1)  # тут ебашишь и вызываешь необходимую из 3-х функций( название),
-# # Interval - временной шаг на графике потом
 
 
 def create_plot(dates, prices, title = ""):
@@ -65,7 +50,7 @@ def create_plot(dates, prices, title = ""):
     plt.xticks(dates[::5] + [dates[-1]])
 
     plt.grid(True)
-
+    
     plt.title(title)
     plt.savefig('price_vs_time_plot.png')  # сохранение графика для отправки пользовтаелю
 
